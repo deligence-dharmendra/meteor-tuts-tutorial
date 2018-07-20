@@ -12,6 +12,12 @@ export default class PostList extends React.Component {
         });
     }
 
+    handleDelete = (postId) => {
+        Meteor.call('post.remove', postId);
+        Meteor.call('comment.removeAll', postId);
+        alert("post and link comments deleted");
+    }
+
     render() {
         const {posts} = this.state;
         const {history} = this.props;
@@ -27,7 +33,8 @@ export default class PostList extends React.Component {
                         return (
                             <div key={post._id}>
                                 <p>Post id: {post._id} </p>
-                                <p>Post title: {post.title}, Post Description: {post.description} </p>
+                                <p>Post title: {post.title}, Post Description: {post.description}
+                                    View: {post.views} Total Comments: {post.count} </p>
                                 <button onClick={() => {
                                     history.push("/posts/edit/" + post._id)
                                 }}> Edit post
@@ -37,6 +44,12 @@ export default class PostList extends React.Component {
                                     history.push("/posts/view/" + post._id)
                                 }}> View post
                                 </button>
+                                { Meteor.userId() &&  ( Meteor.userId() === post.userId )  ?
+                                    <button onClick={() => {
+                                        this.handleDelete(post._id)
+                                    }}> Delete Post
+                                    </button> : ''
+                                }
                             </div>
                         )
                     })}

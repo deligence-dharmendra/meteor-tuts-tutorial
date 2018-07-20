@@ -1,5 +1,5 @@
 import {Meteor} from 'meteor/meteor'
-import {Posts} from '/db';
+import {Posts, Comments} from '/db';
 
 Meteor.methods({
     'post.create'(post) {
@@ -7,7 +7,13 @@ Meteor.methods({
     },
 
     'post.list' () {
-        return Posts.find().fetch();
+        const PostsResult = Posts.find().fetch();
+        const result = PostsResult.map(function(element) {
+            element.count = Comments.find({postId: element._id}).count();
+            return element;
+        });
+
+        return result;
     },
 
     'post.edit' (_id, post) {

@@ -1,8 +1,10 @@
+// Meteor packages imports
+import { Meteor } from 'meteor/meteor';
+
 import SimplSchema from 'simpl-schema';
 
 export default new SimplSchema({
-    title: String,
-    description: String,
+    text: String,
     userId: {
         type: String,
         optional: true,
@@ -14,9 +16,9 @@ export default new SimplSchema({
             return userId;
         },
     },
-    views: {
-        type: Number,
-        defaultValue: 0,
+    postId: {
+        type: String,
+        optional: true,
     },
     createdAt: {
         type: Date,
@@ -32,18 +34,5 @@ export default new SimplSchema({
             }
             return value;
         },
-    },
-    type: {
-        type: String,
-        optional: true,
-        label: 'Select Post Type',
-        allowedValues: [
-            'Nature',
-            'Psychology',
-            'Music',
-            'Programming',
-            'Project Management',
-            'Other',
-        ],
     },
 });
