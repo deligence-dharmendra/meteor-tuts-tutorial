@@ -1,12 +1,16 @@
 import React from 'react';
-import {AutoForm, AutoField, LongTextField} from 'uniforms-unstyled';
+import { AutoForm, AutoField, LongTextField } from 'uniforms-unstyled';
+
+// Import Schema
 import PostSchema from '/db/posts/schema';
 
+// Create and export component
 export default class PostCreate extends React.Component {
     constructor() {
         super();
     }
 
+    // On submit meteor call
     submit = (post) => {
         Meteor.call('post.create', post, (err) => {
             if (err) {
@@ -17,6 +21,7 @@ export default class PostCreate extends React.Component {
     };
 
     render() {
+        // Store props in history
         const {history} = this.props;
 
         return (

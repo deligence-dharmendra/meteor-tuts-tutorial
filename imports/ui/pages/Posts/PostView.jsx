@@ -1,29 +1,42 @@
 import {Meteor} from 'meteor/meteor';
+import { withQuery } from 'meteor/cultofcoders:grapher-react';
 import React from 'react';
 import moment from 'moment';
+
 // Import component
 import CommentCreate from '../Comments/CommentCreate';
-import CommentList from '../Comments/CommentList';
+import PostWithCommentListQuery from '/imports/api/posts/postWithCommentListQuery';
 
-export default class PostView extends React.Component {
+// Create and export component
+class PostView extends React.Component {
     constructor() {
         super();
         this.state = {post: null};
     }
 
     componentDidMount() {
-        Meteor.call('post.get', this.props.match.params._id, (err, post) => {
-            this.setState({post});
+        Meteor.call('post.updateViewCount', this.props.match.params._id, (err, post) => {
+            // Console error if exist
+            if (err) {
+                console.log("error", err);
+            }
         });
     }
 
+    // Method for Delete comment
+    handleDelete = (commentId) => {
+        // Remove comment
+        Meteor.call('comment.remove', commentId);
+    }
+
+    // Method Delete all comment
     handleDeleteAll = (postId) => {
+        // Remove all comments belong to current postid
         Meteor.call('comment.removeAll', postId);
-        alert("comments deleted");
     }
 
     render() {
-        const {post} = this.state;
+        const post = this.props.data;
         const {history} = this.props;
 
         if (!post) {
@@ -41,18 +54,48 @@ export default class PostView extends React.Component {
                         {post.createdAt ? moment(post.createdAt).format("YYYY-MM-DD hh:mm") : ''}
                     </p>
                     <p>Post View Count: {post.views} </p>
+                    <hr/>
+                    <CommentCreate postId={post._id}/>
                     <p>Comments: </p>
-                    <CommentList postId={post._id} userId={post.userId}/>
-                    { Meteor.userId() &&  ( Meteor.userId() === post.userId )  ?
+                    {
+                        post.comments.map((comment) => {
+                            return (
+                                <div key={comment._id}>
+                                    <p>Text: {comment.text}, Email: {comment.user.email
+                                        ? comment.user.email : comment.user.emails[0].address}</p>
+                                    { Meteor.userId() && ( Meteor.userId() === comment.userId )
+                                        || ( Meteor.userId() === post.owner._id )  ?
+                                        <button onClick={() => {
+                                        this.handleDelete(comment._id)}
+                                        }> Delete
+                                        </button> : ''
+                                    }
+                                    <hr/>
+                                </div>
+                            )
+                        })
+                    }
+
+                    { Meteor.userId() &&  ( Meteor.userId() === post.userId) && post.comments
+                        && post.comments.length > 0  ?
                         <button onClick={() => {
                            this.handleDeleteAll(post._id)
                         }}> Delete All Comments
                         </button> : ''
                     }
-                    <hr/>
-                    <CommentCreate postId={post._id}/>
                 </div>
             </div>
         );
     }
 }
+
+// Export query using withQuery
+export default withQuery(props => {
+        return PostWithCommentListQuery.clone(
+            {
+                _id: props.match.params._id,
+            }
+        );
+    },
+    { reactive: true,  single: true /* return single record */}
+)(PostView);

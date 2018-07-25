@@ -1,4 +1,4 @@
-import {Mongo} from "meteor/mongo";
+import { Mongo } from "meteor/mongo";
 import PostSchema from './schema'
 
 const Posts = new Mongo.Collection('posts');

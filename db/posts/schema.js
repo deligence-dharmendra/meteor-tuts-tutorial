@@ -1,3 +1,4 @@
+// Import simple schema
 import SimplSchema from 'simpl-schema';
 
 export default new SimplSchema({

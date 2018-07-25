@@ -1,5 +1,5 @@
 import React from 'react';
-import {AutoForm, AutoField, LongTextField} from 'uniforms-unstyled';
+import { AutoForm, AutoField, LongTextField } from 'uniforms-unstyled';
 import PostSchema from '/db/posts/schema';
 
 export default class PostEdit extends React.Component {
@@ -9,11 +9,13 @@ export default class PostEdit extends React.Component {
     }
 
     componentDidMount() {
-        Meteor.call('post.get', this.props.match.params._id, (err, post) => {
+        Meteor.call('post.edit.get', this.props.match.params._id, (err, post) => {
+            // Set post data in state
             this.setState({post});
         });
     }
 
+    // On submit meteor call and pass data as arguments
     submit = (post) => {
         Meteor.call('post.edit', this.props.match.params._id, post, (err) => {
             if (err) {
@@ -27,6 +29,7 @@ export default class PostEdit extends React.Component {
         const {history} = this.props;
         const {post} = this.state;
 
+        // Show loading till post contain empty data
         if (!post) {
             return <div>Loading....</div>
         }

@@ -1,10 +1,14 @@
 // Meteor packages imports
 import { Meteor } from 'meteor/meteor';
 
+// Import Simpl schema
 import SimplSchema from 'simpl-schema';
 
 export default new SimplSchema({
-    text: String,
+    text: {
+        type: String,
+        label: ''
+    },
     userId: {
         type: String,
         optional: true,
@@ -14,11 +18,11 @@ export default new SimplSchema({
                 userId = this.value || Meteor.userId();
             }
             return userId;
-        },
+        }
     },
     postId: {
         type: String,
-        optional: true,
+        optional: true
     },
     createdAt: {
         type: Date,
@@ -33,6 +37,6 @@ export default new SimplSchema({
                 this.unset();  // Prevent user from supplying their own value
             }
             return value;
-        },
-    },
+        }
+    }
 });

@@ -1,22 +1,16 @@
-import {Meteor} from 'meteor/meteor'
-import {Posts, Comments} from '/db';
+// Import meteor package
+import { Meteor } from 'meteor/meteor'
+
+// Import collection
+import { Posts } from '/db';
 
 Meteor.methods({
     'post.create'(post) {
         Posts.insert(post);
     },
 
-    'post.list' () {
-        const PostsResult = Posts.find().fetch();
-        const result = PostsResult.map(function(element) {
-            element.count = Comments.find({postId: element._id}).count();
-            return element;
-        });
-
-        return result;
-    },
-
     'post.edit' (_id, post) {
+        // Update post data
         Posts.update(_id, {
             $set: {
                 title: post.title,
@@ -27,17 +21,23 @@ Meteor.methods({
     },
 
     'post.remove' (_id) {
+        // Remove post
         Posts.remove(_id);
     },
 
-    'post.get' (_id) {
-        // Increment post views count before get data from db.
-        Posts.update(_id, {
+    'post.edit.get' (_id) {
+        // Return post result
+        return Posts.findOne(_id);
+    },
+
+    'post.updateViewCount' (_id) {
+        // Update view count
+        const result = Posts.update(_id, {
             $inc: {
                 views: 1,
             },
         });
-
-        return Posts.findOne(_id);
-    }
+        // Return result
+        return result;
+    },
 });

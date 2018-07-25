@@ -1,11 +1,16 @@
-import {Meteor} from 'meteor/meteor';
+// Import meteor package
+import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import {AutoForm, LongTextField, HiddenField} from 'uniforms-unstyled';
+import { AutoForm, LongTextField, HiddenField } from 'uniforms-unstyled';
+
+// Import schema
 import CommentSchema from '/db/comments/schema';
 
+// Create and export Component
 export default class CommentCreate extends React.Component {
     constructor() {
         super();
+        let formRef;
     }
 
     submit = (comment) => {
@@ -17,8 +22,8 @@ export default class CommentCreate extends React.Component {
             if (err) {
                 return alert(err.reason);
             }
-            alert('Comment added!');
         });
+        this.formRef.reset();
     };
 
     render() {
@@ -28,7 +33,7 @@ export default class CommentCreate extends React.Component {
         return (
             <div className="comment">
                 <p>Add New Comments</p>
-                <AutoForm onSubmit={this.submit} schema={CommentSchema}>
+                <AutoForm ref={ref => this.formRef = ref} onSubmit={this.submit} schema={CommentSchema}>
                     <LongTextField name="text"/>
                     {/* Pass post id as a hidden field */}
                     <HiddenField name="postId" value={postId}/>

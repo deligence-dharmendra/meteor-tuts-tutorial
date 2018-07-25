@@ -1,6 +1,6 @@
 import React from 'react';
-import {withTracker} from 'meteor/react-meteor-data';
-import {Posts} from '/db';
+import { withTracker } from 'meteor/react-meteor-data';
+import { Posts } from '/db';
 
 class PostListReactive extends React.Component {
     constructor() {
