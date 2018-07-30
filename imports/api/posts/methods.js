@@ -1,43 +1,57 @@
 // Import meteor package
-import { Meteor } from 'meteor/meteor'
+import { Meteor } from 'meteor/meteor';
 
-// Import collection
-import { Posts } from '/db';
+// Import PostService
+import PostService from '/imports/api/posts/services/PostService.js';
 
+// Meteor method
 Meteor.methods({
-    'post.create'(post) {
-        Posts.insert(post);
+    'post.create' (post) {
+        // Throw error if user not login
+        if (!this.userId) {
+            throw new Meteor.Error('not-allowed');
+        }
+
+        const userId = this.userId;
+
+        // Return post id
+        return PostService.createPost(userId, post);
     },
 
     'post.edit' (_id, post) {
-        // Update post data
-        Posts.update(_id, {
-            $set: {
-                title: post.title,
-                description: post.description,
-                type: post.type,
-            }
-        });
+        // Throw error if user not login
+        if (!this.userId) {
+            throw new Meteor.Error('not-allowed');
+        }
+
+        // Update service call
+        PostService.updatePost(_id, post);
     },
 
     'post.remove' (_id) {
-        // Remove post
-        Posts.remove(_id);
+        // Throw error if user not login
+        if (!this.userId) {
+            throw new Meteor.Error('not-allowed');
+        }
+
+        // Update service call
+        PostService.removePost(_id);
     },
 
     'post.edit.get' (_id) {
+
+        const post = PostService.findOnePost(_id);
+
         // Return post result
-        return Posts.findOne(_id);
+        return post;
     },
 
     'post.updateViewCount' (_id) {
-        // Update view count
-        const result = Posts.update(_id, {
-            $inc: {
-                views: 1,
-            },
-        });
+
+        // Update service call
+        const updateView =  PostService.updateViewCountPost(_id);
+
         // Return result
-        return result;
+        return updateView;
     },
 });

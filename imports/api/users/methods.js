@@ -1,5 +1,7 @@
-import {Meteor} from 'meteor/meteor'
-import {Users} from '/db';
+import { Meteor } from 'meteor/meteor';
+// Meteor contributed packages imports
+import { Accounts } from 'meteor/accounts-base';
+import { Users } from '/db';
 
 Meteor.methods({
     'user.register' (data) {

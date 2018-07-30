@@ -1,7 +1,8 @@
 // Import meteor package
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import { AutoForm, LongTextField, HiddenField } from 'uniforms-unstyled';
+import PropTypes from 'prop-types';
+import { AutoForm, LongTextField, HiddenField, ErrorsField } from 'uniforms-unstyled';
 
 // Import schema
 import CommentSchema from '/db/comments/schema';
@@ -10,7 +11,8 @@ import CommentSchema from '/db/comments/schema';
 export default class CommentCreate extends React.Component {
     constructor() {
         super();
-        let formRef;
+        this.formRef = null;
+        this.formRef = React.createRef();
     }
 
     submit = (comment) => {
@@ -23,8 +25,8 @@ export default class CommentCreate extends React.Component {
                 return alert(err.reason);
             }
         });
-        this.formRef.reset();
-    };
+        this.formRef.current.reset();
+    }
 
     render() {
         // Get Post Id
@@ -33,8 +35,10 @@ export default class CommentCreate extends React.Component {
         return (
             <div className="comment">
                 <p>Add New Comments</p>
-                <AutoForm ref={ref => this.formRef = ref} onSubmit={this.submit} schema={CommentSchema}>
-                    <LongTextField name="text"/>
+                <AutoForm ref={this.formRef} onSubmit={this.submit} schema={CommentSchema}>
+                    <ErrorsField/>
+
+                    <LongTextField name="text" placeholder="Type your comment here"/>
                     {/* Pass post id as a hidden field */}
                     <HiddenField name="postId" value={postId}/>
                     <button type='submit'>Add comment</button>
@@ -43,3 +47,8 @@ export default class CommentCreate extends React.Component {
         );
     }
 }
+
+// Define postId props validation
+CommentCreate.propTypes = {
+    postId: PropTypes.string.isRequired,
+};

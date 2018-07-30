@@ -3,7 +3,7 @@ import { Posts } from '/db';
 
 // Create and Export post data with all related comments
 export default Posts.createQuery('postWithCommentList', {
-    $filter({filters, options, params}) {
+    $filter({filters, params}) {
         filters._id = params._id;
     },
     title: 1,
@@ -23,7 +23,7 @@ export default Posts.createQuery('postWithCommentList', {
         email:1,
         createdAt: 1,
         user: {
-			email: 1,
+            email: 1,
         },
     },
 });

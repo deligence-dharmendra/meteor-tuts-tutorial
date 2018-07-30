@@ -1,4 +1,7 @@
+// Import package
+import { Meteor } from 'meteor/meteor';
 import React from 'react';
+import PropTypes from 'prop-types';
 import {AutoForm, AutoField, ErrorsField} from 'uniforms-unstyled';
 import SimpleSchema from 'simpl-schema';
 
@@ -24,7 +27,7 @@ export default class Login extends React.Component {
                     <ErrorsField/>
 
                     <AutoField name="email"
-                               placeholder="Email"/>
+                        placeholder="Email"/>
 
                     <AutoField name="password" type="password" placeholder="Password"/>
 
@@ -42,3 +45,8 @@ const LoginSchema = new SimpleSchema({
     },
     password: {type: String}
 });
+
+// Define history propsType validation
+Login.propTypes = {
+    history: PropTypes.object,
+};

@@ -1,4 +1,5 @@
-import {Meteor} from 'meteor/meteor'
+// Import package
+import {Meteor} from 'meteor/meteor';
 
 Meteor.methods({
     'find.random_number'(min, max) {

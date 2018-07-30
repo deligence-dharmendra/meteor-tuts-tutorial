@@ -1,8 +1,9 @@
+// Import package
 import {Meteor} from 'meteor/meteor';
 import { withQuery } from 'meteor/cultofcoders:grapher-react';
 import React from 'react';
 import moment from 'moment';
-
+import PropTypes from 'prop-types';
 // Import component
 import CommentCreate from '../Comments/CommentCreate';
 import PostWithCommentListQuery from '/imports/api/posts/postWithCommentListQuery';
@@ -11,33 +12,44 @@ import PostWithCommentListQuery from '/imports/api/posts/postWithCommentListQuer
 class PostView extends React.Component {
     constructor() {
         super();
-        this.state = {post: null};
+        this.state = { post: null };
+
+        // Initialize and bind method
+        this.handleNavigation = this.handleNavigation.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
+        this.handleDeleteAllComments = this.handleDeleteAllComments.bind(this);
+    }
+
+    // Handle back click button using props history
+    handleNavigation(event){
+        const { history } = this.props;
+        const type = event.target.dataset.type;
+        // Create url
+        const url = { back: "/posts" };
+        // Push url in history
+        history.push(url[type]);
     }
 
     componentDidMount() {
-        Meteor.call('post.updateViewCount', this.props.match.params._id, (err, post) => {
-            // Console error if exist
-            if (err) {
-                console.log("error", err);
-            }
-        });
+        Meteor.call('post.updateViewCount', this.props.match.params._id);
     }
 
     // Method for Delete comment
-    handleDelete = (commentId) => {
+    handleDelete = (event) => {
+        const commentId = event.target.dataset.id;
         // Remove comment
         Meteor.call('comment.remove', commentId);
     }
 
     // Method Delete all comment
-    handleDeleteAll = (postId) => {
+    handleDeleteAllComments = (event) => {
+        const postId = event.target.dataset.id;
         // Remove all comments belong to current postid
         Meteor.call('comment.removeAll', postId);
     }
 
     render() {
         const post = this.props.data;
-        const {history} = this.props;
 
         if (!post) {
             return <div>Loading....</div>
@@ -45,29 +57,37 @@ class PostView extends React.Component {
 
         return (
             <div className="post">
-                <button onClick={() => history.push('/posts')}>Back to posts</button>
+                <button onClick={this.handleNavigation} data-type="back">
+                    Back to posts
+                </button>
                 <div key={post._id}>
-                    <p>Post id: {post._id} </p>
-                    <p>Post title: {post.title}, Post Description: {post.description} </p>
-                    <p>Post type: {post.type} </p>
-                    <p>Post Created At:
-                        {post.createdAt ? moment(post.createdAt).format("YYYY-MM-DD hh:mm") : ''}
+                    <p>
+                        <b>Post id:</b> { post._id } <br/>
+                        <b>Post title:</b> { post.title } <br/>
+                        <b>Post Description:</b> { post.description } <br/>
+                        <b>Post type:</b> { post.type } <br/>
+                        <b>Post Created At:</b> { post.createdAt
+                            ? moment(post.createdAt).format("YYYY-MM-DD hh:mm") : '' } <br/>
+                        <b>Post View Count:</b>  {post.views }
                     </p>
-                    <p>Post View Count: {post.views} </p>
                     <hr/>
                     <CommentCreate postId={post._id}/>
-                    <p>Comments: </p>
+                    <p><b>Comments:</b></p>
                     {
                         post.comments.map((comment) => {
                             return (
                                 <div key={comment._id}>
-                                    <p>Text: {comment.text}, Email: {comment.user.email
-                                        ? comment.user.email : comment.user.emails[0].address}</p>
+                                    <p>
+                                        Text: {comment.text} <br/>
+                                        Email: {comment.user.email ? comment.user.email
+                                            : comment.user.emails[0].address}
+                                    </p>
+
                                     { Meteor.userId() && ( Meteor.userId() === comment.userId )
                                         || ( Meteor.userId() === post.owner._id )  ?
-                                        <button onClick={() => {
-                                        this.handleDelete(comment._id)}
-                                        }> Delete
+
+                                        <button onClick={this.handleDelete} data-id={comment._id}>
+                                            Delete Comment
                                         </button> : ''
                                     }
                                     <hr/>
@@ -78,9 +98,8 @@ class PostView extends React.Component {
 
                     { Meteor.userId() &&  ( Meteor.userId() === post.userId) && post.comments
                         && post.comments.length > 0  ?
-                        <button onClick={() => {
-                           this.handleDeleteAll(post._id)
-                        }}> Delete All Comments
+                        <button onClick={this.handleDeleteAllComments} data-id={post._id}>
+                            Delete All Comment
                         </button> : ''
                     }
                 </div>
@@ -91,11 +110,22 @@ class PostView extends React.Component {
 
 // Export query using withQuery
 export default withQuery(props => {
-        return PostWithCommentListQuery.clone(
-            {
-                _id: props.match.params._id,
-            }
-        );
-    },
-    { reactive: true,  single: true /* return single record */}
+    return PostWithCommentListQuery.clone(
+        {
+            _id: props.match.params._id,
+        }
+    );
+},
+{ reactive: true,  single: true /* return single record */}
 )(PostView);
+
+// Define history, data, match propsType validation
+PostView.propTypes = {
+    history: PropTypes.object,
+    data: PropTypes.object,
+    match: PropTypes.shape({
+        params: PropTypes.shape({
+            _id: PropTypes.string.isRequired,
+        }),
+    }),
+};

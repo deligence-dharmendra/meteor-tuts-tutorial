@@ -6,12 +6,11 @@ Posts.addLinks({
     owner: {
         type: 'one',
         collection: Users,
-        //field: 'ownerId',
         field: 'userId',
-        index: true,
+        index: true
     },
     comments: {
         collection: Comments,
-        inversedBy: 'post',
-    },
+        inversedBy: 'post'
+    }
 });

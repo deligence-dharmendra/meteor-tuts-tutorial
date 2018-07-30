@@ -1,4 +1,7 @@
+// Import package
+import { Meteor } from 'meteor/meteor';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { AutoForm, AutoField, LongTextField } from 'uniforms-unstyled';
 import PostSchema from '/db/posts/schema';
 
@@ -6,6 +9,16 @@ export default class PostEdit extends React.Component {
     constructor() {
         super();
         this.state = {post: null};
+        this.handleNavigation = this.handleNavigation.bind(this);
+    }
+
+    handleNavigation(event){
+        const {history} = this.props;
+        let type = event.target.dataset.type;
+        // Create url
+        let url = { back: "/posts" };
+        // Push url in history
+        history.push(url[type]);
     }
 
     componentDidMount() {
@@ -26,7 +39,7 @@ export default class PostEdit extends React.Component {
     };
 
     render() {
-        const {history} = this.props;
+        {/*const {history} = this.props;*/}
         const {post} = this.state;
 
         // Show loading till post contain empty data
@@ -42,9 +55,22 @@ export default class PostEdit extends React.Component {
                     {/* Add new field post type */}
                     <AutoField name="type" />
                     <button type='submit'>Edit post</button>
-                    <button onClick={() => history.push('/posts')}>Back to posts</button>
+                    <button onClick={this.handleNavigation} data-type="back">
+                        Back to posts
+                    </button>
+                    {/*<button onClick={() => history.push('/posts')}>Back to posts</button>*/}
                 </AutoForm>
             </div>
         )
     }
 }
+
+// Define history propsType validation
+PostEdit.propTypes = {
+    history: PropTypes.object,
+    match: PropTypes.shape({
+        params: PropTypes.shape({
+            _id: PropTypes.string.isRequired,
+        }),
+    }),
+};

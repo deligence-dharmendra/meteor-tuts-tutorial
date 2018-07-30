@@ -1,4 +1,7 @@
+// Import package
+import { Meteor } from 'meteor/meteor';
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {AutoForm, AutoField, ErrorsField} from 'uniforms-unstyled';
 import SimpleSchema from 'simpl-schema';
 
@@ -55,3 +58,8 @@ const RegisterSchema = new SimpleSchema({
         }
     },
 });
+
+// Define history propsType validation
+Register.propTypes = {
+    history: PropTypes.object,
+};

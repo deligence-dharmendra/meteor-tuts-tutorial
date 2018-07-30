@@ -8,12 +8,12 @@ export default Posts.createQuery('postList', {
     views: 1,
     userId: 1,
     description: 1,
-	comments: {
+    comments: {
         text: 1,
-	    user: {
-		    emails: {
-			    address: 1,
-			},
-		},
-	},
+        user: {
+            emails: {
+                address: 1,
+            },
+        },
+    },
 });

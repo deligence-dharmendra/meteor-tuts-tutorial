@@ -1,3 +1,4 @@
+// Import package
 import React from 'react';
 import {Route} from 'react-router';
 import App from './App';
@@ -10,8 +11,9 @@ import PostView from './pages/Posts/PostView';
 import Register from './pages/Users/Register';
 import Login from './pages/Users/Login';
 
-export default () =>
-    <App>
+// Define component route
+const AppComponent = function () {
+    return <App>
         <Route exact path="/" component={Home}/>
         <Route exact path="/posts" component={PostList} />
         <Route exact path="/posts/reactive" component={PostListReactive} />
@@ -22,3 +24,6 @@ export default () =>
         <Route exact path="/register" component={Register} />
         <Route exact path="/login" component={Login} />
     </App>
+}
+
+export default AppComponent;

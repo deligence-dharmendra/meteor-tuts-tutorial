@@ -1,6 +1,13 @@
+// Import meteor package
+import { Meteor } from 'meteor/meteor';
+
 // Import simple schema
 import SimplSchema from 'simpl-schema';
+import PostTypeEnum from './enums/type';
 
+const _  = require('underscore');
+
+// Define schema
 export default new SimplSchema({
     title: String,
     description: String,
@@ -13,11 +20,11 @@ export default new SimplSchema({
                 userId = this.value || Meteor.userId();
             }
             return userId;
-        },
+        }
     },
     views: {
         type: Number,
-        defaultValue: 0,
+        defaultValue: 0
     },
     createdAt: {
         type: Date,
@@ -38,13 +45,6 @@ export default new SimplSchema({
         type: String,
         optional: true,
         label: 'Select Post Type',
-        allowedValues: [
-            'Nature',
-            'Psychology',
-            'Music',
-            'Programming',
-            'Project Management',
-            'Other',
-        ],
-    },
+        allowedValues: _.values(PostTypeEnum)
+    }
 });

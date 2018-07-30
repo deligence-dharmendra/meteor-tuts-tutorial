@@ -1,14 +1,29 @@
+// Import package
+import { Meteor } from 'meteor/meteor';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Posts } from '/db';
 
 class PostListReactive extends React.Component {
     constructor() {
         super();
+        this.handleNavigation = this.handleNavigation.bind(this);
+    }
+
+    handleNavigation(event){
+        const {history} = this.props;
+        const type = event.target.dataset.type;
+        const id = event.target.dataset.id;
+        const url = {
+            edit: "/posts/edit/" + id,
+            new: "/posts/create"
+        };
+        history.push(url[type]);
     }
 
     render() {
-        const {posts, history} = this.props;
+        const { posts } = this.props;
 
         if (!posts) {
             return <div>Loading....</div>
@@ -22,14 +37,17 @@ class PostListReactive extends React.Component {
                             <div key={post._id}>
                                 <p>Post id: {post._id} </p>
                                 <p>Post title: {post.title}, Post Description: {post.description} </p>
-                                <button onClick={() => {
-                                    history.push("/posts/edit/" + post._id)
-                                }}> Edit post
+                                <button onClick={this.handleNavigation} data-id={post._id} data-type="edit">
+                                    Edit post
                                 </button>
                             </div>
                         )
-                    })}
-                <button onClick={() => history.push('/posts/create')}>Create a new post</button>
+                    })
+                }
+
+                <button onClick={this.handleNavigation} data-type="new">
+                    Create a new post
+                </button>
             </div>
         )
     }
@@ -45,3 +63,9 @@ export default withTracker(props => {
         ...props
     };
 })(PostListReactive);
+
+// Define history, data propsType validation
+PostListReactive.propTypes = {
+    history: PropTypes.object,
+    posts: PropTypes.array,
+};

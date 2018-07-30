@@ -1,14 +1,23 @@
+// Import package
 import React from 'react';
 import ReactDOM from "react-dom";
 import {BrowserRouter} from 'react-router-dom';
 import Router from './Router';
 
-const App = props =>
-    <BrowserRouter>
-        <Router />
-    </BrowserRouter>;
+// Create App component
+class App extends React.Component {
+    render() {
+        return (
+            <BrowserRouter>
+                <Router />
+            </BrowserRouter>
+        );
+    }
+}
 
-ReactDOM.render(
-    <App />,
-    document.getElementById("app")
-);
+// Render component
+ReactDOM.render((
+    <BrowserRouter>
+        <App />
+    </BrowserRouter>
+), document.getElementById('app'));
